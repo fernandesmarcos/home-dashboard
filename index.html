@@ -1,216 +1,214 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Casa</title>
+  <title>Família</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       min-height: 100vh;
-      background: #0f0f14;
-      background-image:
-        radial-gradient(ellipse at 20% 20%, rgba(60, 40, 120, 0.35) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 80%, rgba(20, 60, 100, 0.3) 0%, transparent 60%);
+      background: #e8e8ed;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      padding: 40px 20px 60px;
+      padding: 60px 20px 60px;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
-      color: #fff;
+      color: #1c1c1e;
     }
 
     h1.page-title {
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.3);
-      margin-bottom: 28px;
+      font-size: 52px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #1c1c1e;
+      margin-bottom: 36px;
     }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(2, 180px);
-      gap: 14px;
+      grid-template-columns: repeat(2, 160px);
+      gap: 12px;
       width: fit-content;
     }
 
-    /* Base widget */
     .widget {
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #fff;
       border-radius: 22px;
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      padding: 18px 18px 16px;
+      padding: 18px 16px 16px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      min-height: 160px;
       position: relative;
-      overflow: hidden;
-      transition: background 0.2s, transform 0.15s;
-      min-height: 140px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
     }
-
-    .widget:hover { background: rgba(255,255,255,0.1); }
 
     .widget.large {
       grid-column: span 2;
-      min-height: 130px;
+      min-height: 160px;
+      flex-direction: row;
+      align-items: stretch;
+      gap: 0;
     }
 
-    .widget-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.45);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+    /* ── Clock ─────────────────────────────────────── */
+    .clock-flag { font-size: 28px; line-height: 1; margin-bottom: auto; }
 
-    .widget-icon {
-      font-size: 13px;
-      line-height: 1;
-    }
-
-    /* Clock widget */
     .clock-city {
       font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      color: rgba(255,255,255,0.55);
-      margin-top: 2px;
+      font-weight: 500;
+      color: #8e8e93;
+      margin-top: 12px;
+      margin-bottom: 2px;
     }
 
     .clock-time {
-      font-size: 46px;
-      font-weight: 200;
-      letter-spacing: -0.03em;
+      font-size: 44px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
       line-height: 1;
-      color: #fff;
-      margin-top: auto;
+      color: #1c1c1e;
     }
 
-    .clock-date {
-      font-size: 11px;
-      color: rgba(255,255,255,0.4);
-      margin-top: 4px;
+    /* ── Bill widget ───────────────────────────────── */
+    .bill-left {
+      display: flex;
+      flex-direction: column;
+      min-width: 110px;
+      padding-right: 16px;
     }
 
-    /* Bill widget */
-    .bill-name {
-      font-size: 20px;
-      font-weight: 600;
-      color: #fff;
-      margin-top: 6px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+    .bill-icon { font-size: 28px; line-height: 1; margin-bottom: auto; }
 
-    .bill-amount {
-      font-size: 32px;
-      font-weight: 300;
-      letter-spacing: -0.02em;
-      color: #fff;
-      line-height: 1;
-    }
-
-    .bill-amount span {
-      font-size: 18px;
-      font-weight: 400;
-      opacity: 0.6;
-    }
-
-    .bill-due {
-      font-size: 12px;
-      color: rgba(255,255,255,0.45);
-      margin-top: auto;
-    }
-
-    .bill-urgency {
-      position: absolute;
-      top: 16px;
-      right: 18px;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 3px 9px;
-      border-radius: 20px;
-    }
-
-    .urgency-urgent  { background: rgba(255,59,48,0.25); color: #ff6b6b; }
-    .urgency-soon    { background: rgba(255,165,0,0.2);  color: #ffaa44; }
-    .urgency-ok      { background: rgba(52,199,89,0.18); color: #4cd964; }
-
-    .no-bills {
-      font-size: 15px;
-      color: rgba(255,255,255,0.3);
-      margin-top: auto;
-      margin-bottom: auto;
-      text-align: center;
-    }
-
-    /* Tracker widget */
-    .tracker-last {
-      font-size: 36px;
-      font-weight: 200;
-      letter-spacing: -0.02em;
-      line-height: 1;
-      color: #fff;
-      margin-top: auto;
-    }
-
-    .tracker-last small {
+    .bill-day-name {
       font-size: 13px;
+      font-weight: 500;
+      color: #8e8e93;
+      margin-top: 12px;
+      margin-bottom: 2px;
+    }
+
+    .bill-day-num {
+      font-size: 52px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: #1c1c1e;
+    }
+
+    .bill-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0;
+      border-left: 1px solid #f2f2f7;
+      padding-left: 16px;
+    }
+
+    .bill-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f2f2f7;
+    }
+
+    .bill-row:last-child { border-bottom: none; }
+
+    .bill-row-days {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1c1c1e;
+      min-width: 24px;
+      text-align: right;
+    }
+
+    .bill-row-name {
+      font-size: 15px;
       font-weight: 400;
-      opacity: 0.5;
+      color: #1c1c1e;
     }
 
-    .tracker-status {
-      font-size: 11px;
-      font-weight: 600;
-      margin-top: 4px;
-      padding: 3px 8px;
-      border-radius: 20px;
-      align-self: flex-start;
+    .no-bills-right {
+      font-size: 13px;
+      color: #c7c7cc;
+      text-align: center;
+      padding: 12px 0;
     }
 
-    .status-ok      { background: rgba(52,199,89,0.18);  color: #4cd964; }
-    .status-due     { background: rgba(255,165,0,0.2);   color: #ffaa44; }
-    .status-overdue { background: rgba(255,59,48,0.25);  color: #ff6b6b; }
-
-    .tracker-btn {
-      margin-top: 10px;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.15);
-      color: rgba(255,255,255,0.7);
-      border-radius: 14px;
-      padding: 7px 10px;
-      font-size: 11px;
-      font-weight: 600;
+    .add-bill-trigger {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      background: #f2f2f7;
+      border: none;
+      color: #8e8e93;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      font-size: 20px;
+      line-height: 1;
       cursor: pointer;
-      transition: background 0.15s, color 0.15s;
-      letter-spacing: 0.02em;
-      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
     }
 
-    .tracker-btn:hover {
-      background: rgba(255,255,255,0.18);
-      color: #fff;
+    .add-bill-trigger:hover { background: #e5e5ea; }
+
+    /* ── Tracker ───────────────────────────────────── */
+    .tracker-icon { font-size: 28px; line-height: 1; margin-bottom: auto; }
+
+    .tracker-day-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: #8e8e93;
+      margin-top: 12px;
+      margin-bottom: 2px;
     }
 
-    /* Add bill form */
+    .tracker-day-num {
+      font-size: 52px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: #1c1c1e;
+    }
+
+    .tracker-plus {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      background: #f2f2f7;
+      border: none;
+      color: #8e8e93;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+    }
+
+    .tracker-plus:hover { background: #e5e5ea; color: #1c1c1e; }
+
+    .tracker-overdue .tracker-day-num { color: #ff3b30; }
+    .tracker-due     .tracker-day-num { color: #ff9500; }
+
+    /* ── Modal ─────────────────────────────────────── */
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(8px);
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(6px);
       z-index: 100;
       align-items: center;
       justify-content: center;
@@ -219,54 +217,45 @@
     .modal-overlay.open { display: flex; }
 
     .modal {
-      background: #1c1c28;
-      border: 1px solid rgba(255,255,255,0.12);
+      background: #fff;
       border-radius: 24px;
       padding: 28px 24px;
       width: 340px;
       display: flex;
       flex-direction: column;
       gap: 14px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.15);
     }
 
     .modal h2 {
       font-size: 17px;
-      font-weight: 600;
+      font-weight: 700;
+      color: #1c1c1e;
     }
 
     .modal input, .modal select {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.12);
+      background: #f2f2f7;
+      border: none;
       border-radius: 12px;
-      color: #fff;
-      padding: 10px 14px;
-      font-size: 14px;
+      color: #1c1c1e;
+      padding: 12px 14px;
+      font-size: 15px;
       font-family: inherit;
       width: 100%;
       outline: none;
     }
 
-    .modal input:focus, .modal select:focus {
-      border-color: rgba(255,255,255,0.3);
-    }
-
-    .modal input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.4); }
-
-    .modal select option { background: #1c1c28; }
-
+    .modal input::placeholder { color: #c7c7cc; }
+    .modal select option { background: #fff; }
     .modal-row { display: flex; gap: 10px; }
 
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 4px;
-    }
+    .modal-actions { display: flex; gap: 10px; margin-top: 4px; }
 
     .btn-cancel, .btn-save {
       flex: 1;
-      padding: 11px;
+      padding: 13px;
       border-radius: 14px;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
       border: none;
@@ -274,163 +263,113 @@
       transition: opacity 0.15s;
     }
 
-    .btn-cancel { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
-    .btn-save   { background: #5e5ce6; color: #fff; }
-    .btn-cancel:hover { opacity: 0.8; }
+    .btn-cancel { background: #f2f2f7; color: #8e8e93; }
+    .btn-save   { background: #1c1c1e; color: #fff; }
+    .btn-cancel:hover { opacity: 0.7; }
     .btn-save:hover   { opacity: 0.85; }
 
-    /* Bills list in modal */
-    .bills-list { display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; }
+    .bills-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
 
     .bill-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(255,255,255,0.05);
+      background: #f2f2f7;
       border-radius: 10px;
-      padding: 9px 12px;
+      padding: 10px 12px;
       font-size: 13px;
     }
 
     .bill-item-info { display: flex; flex-direction: column; gap: 2px; }
-    .bill-item-name { font-weight: 600; }
-    .bill-item-date { color: rgba(255,255,255,0.4); font-size: 11px; }
-    .bill-item-amount { font-weight: 600; color: #a5a5ff; }
+    .bill-item-name { font-weight: 600; color: #1c1c1e; }
+    .bill-item-date { color: #8e8e93; font-size: 11px; }
+    .bill-item-amount { font-weight: 700; color: #1c1c1e; font-size: 14px; }
 
     .bill-delete {
       background: none;
       border: none;
-      color: rgba(255,59,48,0.6);
-      font-size: 16px;
+      color: #ff3b30;
+      font-size: 18px;
       cursor: pointer;
       padding: 0 4px;
       line-height: 1;
-      transition: color 0.15s;
+      opacity: 0.5;
+      transition: opacity 0.15s;
     }
 
-    .bill-delete:hover { color: #ff3b30; }
+    .bill-delete:hover { opacity: 1; }
 
-    .add-bill-trigger {
-      position: absolute;
-      bottom: 16px;
-      right: 18px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.12);
-      color: rgba(255,255,255,0.5);
-      border-radius: 50%;
-      width: 28px;
-      height: 28px;
-      font-size: 18px;
-      line-height: 1;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.15s, color 0.15s;
-    }
-
-    .add-bill-trigger:hover { background: rgba(255,255,255,0.16); color: #fff; }
-
-    /* glow accents */
-    .widget.glow-purple::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      background: radial-gradient(circle at 80% 0%, rgba(120,80,255,0.2) 0%, transparent 60%);
-      pointer-events: none;
-    }
-
-    .widget.glow-blue::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      background: radial-gradient(circle at 20% 100%, rgba(0,120,255,0.18) 0%, transparent 60%);
-      pointer-events: none;
-    }
-
-    .widget.glow-green::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      background: radial-gradient(circle at 50% 100%, rgba(52,199,89,0.15) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .widget.glow-orange::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      background: radial-gradient(circle at 50% 100%, rgba(255,149,0,0.15) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    @media (max-width: 420px) {
-      .grid { grid-template-columns: repeat(2, 1fr); width: 100%; }
-      .clock-time { font-size: 36px; }
+    @media (max-width: 380px) {
+      .grid { grid-template-columns: repeat(2, 1fr); width: calc(100vw - 40px); }
+      .clock-time, .tracker-day-num, .bill-day-num { font-size: 38px; }
     }
   </style>
 </head>
 <body>
 
-<h1 class="page-title">Casa</h1>
+<h1 class="page-title">Família</h1>
 
 <div class="grid">
   <!-- Clock: California -->
-  <div class="widget glow-purple" id="clock-ca">
-    <div class="widget-label"><span class="widget-icon">🌅</span> California</div>
-    <div class="clock-city">Los Angeles</div>
+  <div class="widget" id="clock-ca">
+    <div class="clock-flag">🇺🇸</div>
+    <div class="clock-city">California</div>
     <div class="clock-time" id="time-ca">--:--</div>
-    <div class="clock-date" id="date-ca">---</div>
   </div>
 
   <!-- Clock: Rio de Janeiro -->
-  <div class="widget glow-blue" id="clock-rio">
-    <div class="widget-label"><span class="widget-icon">🏖️</span> Rio de Janeiro</div>
-    <div class="clock-city">Brasil</div>
+  <div class="widget" id="clock-rio">
+    <div class="clock-flag">🇧🇷</div>
+    <div class="clock-city">Rio de Janeiro</div>
     <div class="clock-time" id="time-rio">--:--</div>
-    <div class="clock-date" id="date-rio">---</div>
   </div>
 
   <!-- Bills -->
   <div class="widget large" id="widget-bill">
-    <div class="widget-label"><span class="widget-icon">💳</span> Próxima Conta</div>
-    <div id="bill-content"></div>
+    <div class="bill-left">
+      <div class="bill-icon">💸</div>
+      <div id="bill-next-day-name" class="bill-day-name">—</div>
+      <div id="bill-next-day-num"  class="bill-day-num">—</div>
+    </div>
+    <div class="bill-right" id="bill-list-inline"></div>
     <button class="add-bill-trigger" id="open-bill-modal" title="Gerenciar contas">+</button>
   </div>
 
   <!-- Plants -->
-  <div class="widget glow-green" id="widget-plants">
-    <div class="widget-label"><span class="widget-icon">🌱</span> Plantas</div>
-    <div class="tracker-last" id="plants-days">--<small> dias atrás</small></div>
-    <div class="tracker-status" id="plants-status"></div>
-    <button class="tracker-btn" id="btn-water" onclick="markToday('plants')">💧 Regou hoje</button>
+  <div class="widget" id="widget-plants">
+    <div class="tracker-icon">🪴</div>
+    <div class="tracker-day-name" id="plants-day-name">—</div>
+    <div class="tracker-day-num"  id="plants-day-num">—</div>
+    <button class="tracker-plus" onclick="markToday('plants')" title="Regou hoje">+</button>
   </div>
 
-  <!-- Candle / Vela -->
-  <div class="widget glow-orange" id="widget-candle">
-    <div class="widget-label"><span class="widget-icon">🕯️</span> Vela</div>
-    <div class="tracker-last" id="candle-days">--<small> days ago</small></div>
-    <div class="tracker-status" id="candle-status"></div>
-    <button class="tracker-btn" id="btn-candle" onclick="markToday('candle')">🔥 Acendeu hoje</button>
+  <!-- Candle -->
+  <div class="widget" id="widget-candle">
+    <div class="tracker-icon">🕯️</div>
+    <div class="tracker-day-name" id="candle-day-name">—</div>
+    <div class="tracker-day-num"  id="candle-day-num">—</div>
+    <button class="tracker-plus" onclick="markToday('candle')" title="Acendeu hoje">+</button>
   </div>
 </div>
 
 <!-- Bill modal -->
 <div class="modal-overlay" id="bill-modal">
   <div class="modal">
-    <h2>💳 Gerenciar Contas</h2>
+    <h2>💸 Gerenciar Contas</h2>
 
     <div class="bills-list" id="bills-list"></div>
 
-    <hr style="border-color: rgba(255,255,255,0.08);" />
+    <hr style="border: none; border-top: 1px solid #f2f2f7;" />
 
-    <input type="text" id="bill-name" placeholder="Nome da conta (ex: Aluguel, Internet)" />
+    <input type="text" id="bill-name" placeholder="Nome da conta (ex: Aluguel)" />
     <div class="modal-row">
-      <input type="number" id="bill-amount" placeholder="Valor (R$ / $)" min="0" step="0.01" />
+      <input type="number" id="bill-amount" placeholder="Valor" min="0" step="0.01" />
       <select id="bill-currency">
         <option value="R$">R$</option>
         <option value="$">$</option>
@@ -440,99 +379,102 @@
 
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
-      <button class="btn-save" onclick="addBill()">Adicionar</button>
+      <button class="btn-save"   onclick="addBill()">Adicionar</button>
     </div>
   </div>
 </div>
 
 <script>
-// ── Storage helpers ────────────────────────────────────────────────────────
-const load = (k, def) => { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch { return def; } };
+const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
 const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
 
-// ── State ──────────────────────────────────────────────────────────────────
-let bills   = load('bills', []);
+let bills    = load('bills', []);
 let trackers = load('trackers', { plants: null, candle: null });
 
-// ── Clocks ─────────────────────────────────────────────────────────────────
-const DAY_NAMES  = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
-const MON_NAMES  = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+// ── Clocks ──────────────────────────────────────────────────────────────────
+const DAY_PT = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
 
-function fmtClock(date, tz) {
-  const d = new Date(date.toLocaleString('en-US', { timeZone: tz }));
-  const h = d.getHours(), m = d.getMinutes();
-  const hh = String(h).padStart(2, '0');
-  const mm = String(m).padStart(2, '0');
-  const dayName = DAY_NAMES[d.getDay()];
-  const mon     = MON_NAMES[d.getMonth()];
-  const day     = d.getDate();
-  return { time: `${hh}:${mm}`, date: `${dayName}, ${mon} ${day}` };
+function localDate(tz) {
+  const now = new Date();
+  const str = now.toLocaleString('en-US', { timeZone: tz, hour12: false,
+    hour: '2-digit', minute: '2-digit', weekday: 'short', day: 'numeric' });
+  const d = new Date(now.toLocaleString('en-US', { timeZone: tz }));
+  const h = String(d.getHours()).padStart(2,'0');
+  const m = String(d.getMinutes()).padStart(2,'0');
+  return { time: `${h}:${m}`, dayIndex: d.getDay() };
 }
 
 function updateClocks() {
-  const now = new Date();
-  const ca  = fmtClock(now, 'America/Los_Angeles');
-  const rio = fmtClock(now, 'America/Sao_Paulo');
+  const ca  = localDate('America/Los_Angeles');
+  const rio = localDate('America/Sao_Paulo');
   document.getElementById('time-ca').textContent  = ca.time;
-  document.getElementById('date-ca').textContent  = ca.date;
   document.getElementById('time-rio').textContent = rio.time;
-  document.getElementById('date-rio').textContent = rio.date;
 }
 
 updateClocks();
 setInterval(updateClocks, 1000);
 
-// ── Bills ──────────────────────────────────────────────────────────────────
-function todayStr() {
-  return new Date().toISOString().slice(0, 10);
-}
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function todayStr() { return new Date().toISOString().slice(0,10); }
 
 function daysDiff(dateStr) {
-  const now    = new Date(); now.setHours(0,0,0,0);
-  const target = new Date(dateStr + 'T00:00:00');
-  return Math.round((target - now) / 86400000);
+  const now = new Date(); now.setHours(0,0,0,0);
+  return Math.round((new Date(dateStr + 'T00:00:00') - now) / 86400000);
 }
 
-function renderBills() {
-  const today = todayStr();
-  const upcoming = bills
-    .filter(b => b.date >= today)
-    .sort((a, b) => a.date.localeCompare(b.date));
+function calcDaysSince(dateStr) {
+  if (!dateStr) return null;
+  const now = new Date(); now.setHours(0,0,0,0);
+  return Math.round((now - new Date(dateStr + 'T00:00:00')) / 86400000);
+}
 
-  const next = upcoming[0] ?? null;
-  const el   = document.getElementById('bill-content');
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Bills ────────────────────────────────────────────────────────────────────
+function renderBills() {
+  const today    = todayStr();
+  const upcoming = bills.filter(b => b.date >= today).sort((a,b) => a.date.localeCompare(b.date));
+  const next     = upcoming[0] ?? null;
+
+  const nameEl = document.getElementById('bill-next-day-name');
+  const numEl  = document.getElementById('bill-next-day-num');
+  const listEl = document.getElementById('bill-list-inline');
 
   if (!next) {
-    el.innerHTML = `<p class="no-bills">Nenhuma conta próxima.<br><small style="color:rgba(255,255,255,0.2)">Toque em + para adicionar</small></p>`;
+    nameEl.textContent = '—';
+    numEl.textContent  = '—';
+    listEl.innerHTML   = `<p class="no-bills-right">Toque em + para adicionar contas</p>`;
     return;
   }
 
-  const diff = daysDiff(next.date);
-  let urgencyClass, urgencyLabel;
-  if      (diff <= 3)  { urgencyClass = 'urgency-urgent'; urgencyLabel = diff === 0 ? 'Hoje!' : `${diff}d`; }
-  else if (diff <= 7)  { urgencyClass = 'urgency-soon';   urgencyLabel = `${diff} dias`; }
-  else                 { urgencyClass = 'urgency-ok';      urgencyLabel = `${diff} dias`; }
+  const nextDate = new Date(next.date + 'T00:00:00');
+  nameEl.textContent = DAY_PT[nextDate.getDay()];
+  numEl.textContent  = nextDate.getDate();
 
-  const dateObj = new Date(next.date + 'T00:00:00');
-  const dateLabel = `${DAY_NAMES[dateObj.getDay()]}, ${MON_NAMES[dateObj.getMonth()]} ${dateObj.getDate()}`;
+  // Show up to 3 upcoming bills with days until due
+  const rows = upcoming.slice(0, 3).map(b => {
+    const diff = daysDiff(b.date);
+    const label = diff === 0 ? 'hoje' : `${diff}`;
+    return `<div class="bill-row">
+      <span class="bill-row-days">${escHtml(label)}</span>
+      <span class="bill-row-name">${escHtml(b.name)}</span>
+    </div>`;
+  }).join('');
 
-  el.innerHTML = `
-    <div class="bill-urgency ${urgencyClass}">${urgencyLabel}</div>
-    <div class="bill-name">${escHtml(next.name)}</div>
-    <div class="bill-amount"><span>${escHtml(next.currency)}</span> ${Number(next.amount).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
-    <div class="bill-due">Vence ${dateLabel}${upcoming.length > 1 ? ` · mais ${upcoming.length - 1} próximas` : ''}</div>
-  `;
+  listEl.innerHTML = rows;
 }
 
 function renderBillsList() {
-  const list = document.getElementById('bills-list');
-  const today = todayStr();
+  const list   = document.getElementById('bills-list');
+  const today  = todayStr();
   const sorted = [...bills].sort((a,b) => a.date.localeCompare(b.date));
   if (!sorted.length) {
-    list.innerHTML = `<p style="color:rgba(255,255,255,0.3);font-size:13px;text-align:center;padding:8px 0">Nenhuma conta cadastrada</p>`;
+    list.innerHTML = `<p style="color:#c7c7cc;font-size:13px;text-align:center;padding:8px 0">Nenhuma conta cadastrada</p>`;
     return;
   }
-  list.innerHTML = sorted.map((b, i) => {
+  list.innerHTML = sorted.map((b,i) => {
     const past = b.date < today;
     return `<div class="bill-item" style="${past ? 'opacity:0.45' : ''}">
       <div class="bill-item-info">
@@ -540,7 +482,7 @@ function renderBillsList() {
         <div class="bill-item-date">${b.date}${past ? ' · passada' : ''}</div>
       </div>
       <div class="bill-item-amount">${escHtml(b.currency)} ${Number(b.amount).toFixed(2)}</div>
-      <button class="bill-delete" onclick="deleteBill(${i})" title="Remove">×</button>
+      <button class="bill-delete" onclick="deleteBill(${i})">×</button>
     </div>`;
   }).join('');
 }
@@ -572,63 +514,41 @@ document.getElementById('open-bill-modal').addEventListener('click', () => {
   document.getElementById('bill-modal').classList.add('open');
 });
 
-function closeModal() {
-  document.getElementById('bill-modal').classList.remove('open');
-}
+function closeModal() { document.getElementById('bill-modal').classList.remove('open'); }
+document.getElementById('bill-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
 
-document.getElementById('bill-modal').addEventListener('click', e => {
-  if (e.target === e.currentTarget) closeModal();
-});
-
-// ── Trackers ───────────────────────────────────────────────────────────────
-// plants: 2x per week → every 3-4 days. Alert if > 3 days
-// candle: 1x per week → Alert if > 7 days
-
+// ── Trackers ─────────────────────────────────────────────────────────────────
 const TRACKER_CONFIG = {
-  plants: { dueAfter: 3,  overAfter: 4,  daysLabel: d => d === 1 ? '1' : String(d) },
-  candle: { dueAfter: 7,  overAfter: 10  },
+  plants: { dueAfter: 3, overAfter: 4 },
+  candle: { dueAfter: 7, overAfter: 10 },
 };
 
-function calcDaysSince(dateStr) {
-  if (!dateStr) return null;
-  const then = new Date(dateStr + 'T00:00:00');
-  const now  = new Date(); now.setHours(0,0,0,0);
-  return Math.round((now - then) / 86400000);
-}
-
 function renderTracker(key) {
-  const cfg  = TRACKER_CONFIG[key];
-  const days = calcDaysSince(trackers[key]);
+  const cfg    = TRACKER_CONFIG[key];
+  const days   = calcDaysSince(trackers[key]);
+  const nameEl = document.getElementById(`${key}-day-name`);
+  const numEl  = document.getElementById(`${key}-day-num`);
+  const widget = document.getElementById(`widget-${key}`);
 
-  const daysEl   = document.getElementById(`${key}-days`);
-  const statusEl = document.getElementById(`${key}-status`);
+  widget.classList.remove('tracker-overdue','tracker-due');
 
   if (days === null) {
-    daysEl.innerHTML   = `—<small> sem registro</small>`;
-    statusEl.className = 'tracker-status status-due';
-    statusEl.textContent = 'Sem registro';
+    nameEl.textContent = 'Sem registro';
+    numEl.textContent  = '—';
+    widget.classList.add('tracker-due');
     return;
   }
 
-  daysEl.innerHTML = days === 0
-    ? `Hoje`
-    : `${days}<small> dia${days !== 1 ? 's' : ''} atrás</small>`;
+  const lastDate = new Date(trackers[key] + 'T00:00:00');
+  nameEl.textContent = DAY_PT[lastDate.getDay()];
+  numEl.textContent  = lastDate.getDate();
 
-  if (days < cfg.dueAfter) {
-    statusEl.className   = 'tracker-status status-ok';
-    statusEl.textContent = '✓ Em dia';
-  } else if (days < cfg.overAfter) {
-    statusEl.className   = 'tracker-status status-due';
-    statusEl.textContent = '● Quase na hora';
-  } else {
-    statusEl.className   = 'tracker-status status-overdue';
-    statusEl.textContent = '⚠ Atrasado!';
-  }
+  if      (days >= cfg.overAfter) widget.classList.add('tracker-overdue');
+  else if (days >= cfg.dueAfter)  widget.classList.add('tracker-due');
 }
 
 function markToday(key) {
-  const today = todayStr();
-  trackers[key] = today;
+  trackers[key] = todayStr();
   save('trackers', trackers);
   renderTracker(key);
 }
@@ -636,10 +556,6 @@ function markToday(key) {
 renderBills();
 renderTracker('plants');
 renderTracker('candle');
-
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
 </script>
 </body>
 </html>
