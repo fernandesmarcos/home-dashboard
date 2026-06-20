@@ -405,10 +405,8 @@ function localDate(tz) {
 function updateClocks() {
   const ca  = localDate('America/Los_Angeles');
   const rio = localDate('America/Sao_Paulo');
-  const blink = new Date().getSeconds() % 2 === 0;
-  const sep = blink ? ':' : '<span style="opacity:0">:</span>';
-  document.getElementById('time-ca').innerHTML  = ca.time.replace(':', sep);
-  document.getElementById('time-rio').innerHTML = rio.time.replace(':', sep);
+  document.getElementById('time-ca').textContent  = ca.time;
+  document.getElementById('time-rio').textContent = rio.time;
 }
 
 updateClocks();
