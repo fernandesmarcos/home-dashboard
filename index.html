@@ -516,7 +516,7 @@ function deleteBill(i) {
   renderBillsList();
 }
 
-document.getElementById('open-bill-modal').addEventListener('click', () => {
+document.getElementById('open-bill-modal')?.addEventListener('click', () => {
   renderBillsList();
   document.getElementById('bill-modal').classList.add('open');
 });
