@@ -368,14 +368,7 @@
     <hr style="border: none; border-top: 1px solid #f2f2f7;" />
 
     <input type="text" id="bill-name" placeholder="Nome da conta (ex: Aluguel)" />
-    <div class="modal-row">
-      <input type="number" id="bill-amount" placeholder="Valor" min="0" step="0.01" />
-      <select id="bill-currency">
-        <option value="R$">R$</option>
-        <option value="$">$</option>
-      </select>
-    </div>
-    <input type="date" id="bill-date" />
+    <input type="number" id="bill-day" placeholder="Dia do mês (ex: 10)" min="1" max="31" />
 
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
@@ -388,7 +381,15 @@
 const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
 const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
 
-let bills    = load('bills', []);
+const DEFAULT_BILLS = [
+  { name: 'Água',       day: 6  },
+  { name: 'Transporte', day: 10 },
+  { name: 'Faculdade',  day: 10 },
+  { name: 'Escola',     day: 15 },
+  { name: 'Luz',        day: 20 },
+];
+
+let bills    = load('bills', DEFAULT_BILLS);
 let trackers = load('trackers', { plants: null, candle: null });
 
 // ── Clocks ──────────────────────────────────────────────────────────────────
@@ -433,30 +434,42 @@ function escHtml(s) {
 }
 
 // ── Bills ────────────────────────────────────────────────────────────────────
-function renderBills() {
-  const today    = todayStr();
-  const upcoming = bills.filter(b => b.date >= today).sort((a,b) => a.date.localeCompare(b.date));
-  const next     = upcoming[0] ?? null;
+// Returns the next due date string (YYYY-MM-DD) for a day-of-month bill
+function nextDueDate(day) {
+  const now = new Date(); now.setHours(0,0,0,0);
+  const y = now.getFullYear(), m = now.getMonth();
+  let candidate = new Date(y, m, day);
+  if (candidate < now) candidate = new Date(y, m + 1, day);
+  return candidate;
+}
 
+function billsSorted() {
+  return [...bills]
+    .map(b => ({ ...b, nextDate: nextDueDate(b.day) }))
+    .sort((a, b) => a.nextDate - b.nextDate);
+}
+
+function renderBills() {
+  const sorted = billsSorted();
   const nameEl = document.getElementById('bill-next-day-name');
   const numEl  = document.getElementById('bill-next-day-num');
   const listEl = document.getElementById('bill-list-inline');
 
-  if (!next) {
+  if (!sorted.length) {
     nameEl.textContent = '—';
     numEl.textContent  = '—';
     listEl.innerHTML   = `<p class="no-bills-right">Toque em + para adicionar contas</p>`;
     return;
   }
 
-  const nextDate = new Date(next.date + 'T00:00:00');
-  nameEl.textContent = DAY_PT[nextDate.getDay()];
-  numEl.textContent  = nextDate.getDate();
+  const next = sorted[0];
+  nameEl.textContent = DAY_PT[next.nextDate.getDay()];
+  numEl.textContent  = next.nextDate.getDate();
 
-  // Show up to 3 upcoming bills with days until due
-  const rows = upcoming.slice(0, 3).map(b => {
-    const diff = daysDiff(b.date);
-    const label = diff === 0 ? 'hoje' : `${diff}`;
+  const now = new Date(); now.setHours(0,0,0,0);
+  const rows = sorted.slice(0, 3).map(b => {
+    const diff  = Math.round((b.nextDate - now) / 86400000);
+    const label = diff === 0 ? 'hoje' : String(diff);
     return `<div class="bill-row">
       <span class="bill-row-days">${escHtml(label)}</span>
       <span class="bill-row-name">${escHtml(b.name)}</span>
@@ -468,36 +481,31 @@ function renderBills() {
 
 function renderBillsList() {
   const list   = document.getElementById('bills-list');
-  const today  = todayStr();
-  const sorted = [...bills].sort((a,b) => a.date.localeCompare(b.date));
+  const sorted = billsSorted();
   if (!sorted.length) {
     list.innerHTML = `<p style="color:#c7c7cc;font-size:13px;text-align:center;padding:8px 0">Nenhuma conta cadastrada</p>`;
     return;
   }
-  list.innerHTML = sorted.map((b,i) => {
-    const past = b.date < today;
-    return `<div class="bill-item" style="${past ? 'opacity:0.45' : ''}">
+  list.innerHTML = sorted.map(b => {
+    const idx = bills.findIndex(x => x.name === b.name && x.day === b.day);
+    return `<div class="bill-item">
       <div class="bill-item-info">
         <div class="bill-item-name">${escHtml(b.name)}</div>
-        <div class="bill-item-date">${b.date}${past ? ' · passada' : ''}</div>
+        <div class="bill-item-date">Todo dia ${b.day}</div>
       </div>
-      <div class="bill-item-amount">${escHtml(b.currency)} ${Number(b.amount).toFixed(2)}</div>
-      <button class="bill-delete" onclick="deleteBill(${i})">×</button>
+      <button class="bill-delete" onclick="deleteBill(${idx})">×</button>
     </div>`;
   }).join('');
 }
 
 function addBill() {
-  const name     = document.getElementById('bill-name').value.trim();
-  const amount   = parseFloat(document.getElementById('bill-amount').value);
-  const currency = document.getElementById('bill-currency').value;
-  const date     = document.getElementById('bill-date').value;
-  if (!name || !date || isNaN(amount)) return;
-  bills.push({ name, amount, currency, date });
+  const name = document.getElementById('bill-name').value.trim();
+  const day  = parseInt(document.getElementById('bill-day').value);
+  if (!name || isNaN(day) || day < 1 || day > 31) return;
+  bills.push({ name, day });
   save('bills', bills);
-  document.getElementById('bill-name').value   = '';
-  document.getElementById('bill-amount').value = '';
-  document.getElementById('bill-date').value   = '';
+  document.getElementById('bill-name').value = '';
+  document.getElementById('bill-day').value  = '';
   renderBills();
   renderBillsList();
 }
