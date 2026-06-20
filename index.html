@@ -410,7 +410,8 @@ function updateClocks() {
 }
 
 updateClocks();
-setInterval(updateClocks, 1000);
+// Sync to the next full minute, then tick every 60s
+setTimeout(() => { updateClocks(); setInterval(updateClocks, 60000); }, (60 - new Date().getSeconds()) * 1000);
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 function todayStr() { return new Date().toISOString().slice(0,10); }
