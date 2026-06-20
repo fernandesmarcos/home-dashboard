@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Home Dashboard</title>
+  <title>Casa</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -376,7 +376,7 @@
 </head>
 <body>
 
-<h1 class="page-title">Home</h1>
+<h1 class="page-title">Casa</h1>
 
 <div class="grid">
   <!-- Clock: California -->
@@ -397,17 +397,17 @@
 
   <!-- Bills -->
   <div class="widget large" id="widget-bill">
-    <div class="widget-label"><span class="widget-icon">💳</span> Next Bill</div>
+    <div class="widget-label"><span class="widget-icon">💳</span> Próxima Conta</div>
     <div id="bill-content"></div>
-    <button class="add-bill-trigger" id="open-bill-modal" title="Manage bills">+</button>
+    <button class="add-bill-trigger" id="open-bill-modal" title="Gerenciar contas">+</button>
   </div>
 
   <!-- Plants -->
   <div class="widget glow-green" id="widget-plants">
-    <div class="widget-label"><span class="widget-icon">🌱</span> Plants</div>
-    <div class="tracker-last" id="plants-days">--<small> days ago</small></div>
+    <div class="widget-label"><span class="widget-icon">🌱</span> Plantas</div>
+    <div class="tracker-last" id="plants-days">--<small> dias atrás</small></div>
     <div class="tracker-status" id="plants-status"></div>
-    <button class="tracker-btn" id="btn-water" onclick="markToday('plants')">💧 Watered today</button>
+    <button class="tracker-btn" id="btn-water" onclick="markToday('plants')">💧 Regou hoje</button>
   </div>
 
   <!-- Candle / Vela -->
@@ -422,15 +422,15 @@
 <!-- Bill modal -->
 <div class="modal-overlay" id="bill-modal">
   <div class="modal">
-    <h2>💳 Manage Bills</h2>
+    <h2>💳 Gerenciar Contas</h2>
 
     <div class="bills-list" id="bills-list"></div>
 
     <hr style="border-color: rgba(255,255,255,0.08);" />
 
-    <input type="text" id="bill-name" placeholder="Bill name (e.g. Rent, Internet)" />
+    <input type="text" id="bill-name" placeholder="Nome da conta (ex: Aluguel, Internet)" />
     <div class="modal-row">
-      <input type="number" id="bill-amount" placeholder="Amount (R$ / $)" min="0" step="0.01" />
+      <input type="number" id="bill-amount" placeholder="Valor (R$ / $)" min="0" step="0.01" />
       <select id="bill-currency">
         <option value="R$">R$</option>
         <option value="$">$</option>
@@ -439,8 +439,8 @@
     <input type="date" id="bill-date" />
 
     <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" onclick="addBill()">Add Bill</button>
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-save" onclick="addBill()">Adicionar</button>
     </div>
   </div>
 </div>
@@ -455,8 +455,8 @@ let bills   = load('bills', []);
 let trackers = load('trackers', { plants: null, candle: null });
 
 // ── Clocks ─────────────────────────────────────────────────────────────────
-const DAY_NAMES  = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-const MON_NAMES  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DAY_NAMES  = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+const MON_NAMES  = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
 function fmtClock(date, tz) {
   const d = new Date(date.toLocaleString('en-US', { timeZone: tz }));
@@ -503,15 +503,15 @@ function renderBills() {
   const el   = document.getElementById('bill-content');
 
   if (!next) {
-    el.innerHTML = `<p class="no-bills">No upcoming bills.<br><small style="color:rgba(255,255,255,0.2)">Tap + to add one</small></p>`;
+    el.innerHTML = `<p class="no-bills">Nenhuma conta próxima.<br><small style="color:rgba(255,255,255,0.2)">Toque em + para adicionar</small></p>`;
     return;
   }
 
   const diff = daysDiff(next.date);
   let urgencyClass, urgencyLabel;
-  if      (diff <= 3)  { urgencyClass = 'urgency-urgent'; urgencyLabel = diff === 0 ? 'Today!' : `${diff}d left`; }
-  else if (diff <= 7)  { urgencyClass = 'urgency-soon';   urgencyLabel = `${diff} days`; }
-  else                 { urgencyClass = 'urgency-ok';      urgencyLabel = `${diff} days`; }
+  if      (diff <= 3)  { urgencyClass = 'urgency-urgent'; urgencyLabel = diff === 0 ? 'Hoje!' : `${diff}d`; }
+  else if (diff <= 7)  { urgencyClass = 'urgency-soon';   urgencyLabel = `${diff} dias`; }
+  else                 { urgencyClass = 'urgency-ok';      urgencyLabel = `${diff} dias`; }
 
   const dateObj = new Date(next.date + 'T00:00:00');
   const dateLabel = `${DAY_NAMES[dateObj.getDay()]}, ${MON_NAMES[dateObj.getMonth()]} ${dateObj.getDate()}`;
@@ -520,7 +520,7 @@ function renderBills() {
     <div class="bill-urgency ${urgencyClass}">${urgencyLabel}</div>
     <div class="bill-name">${escHtml(next.name)}</div>
     <div class="bill-amount"><span>${escHtml(next.currency)}</span> ${Number(next.amount).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
-    <div class="bill-due">Due ${dateLabel}${upcoming.length > 1 ? ` · ${upcoming.length - 1} more upcoming` : ''}</div>
+    <div class="bill-due">Vence ${dateLabel}${upcoming.length > 1 ? ` · mais ${upcoming.length - 1} próximas` : ''}</div>
   `;
 }
 
@@ -529,7 +529,7 @@ function renderBillsList() {
   const today = todayStr();
   const sorted = [...bills].sort((a,b) => a.date.localeCompare(b.date));
   if (!sorted.length) {
-    list.innerHTML = `<p style="color:rgba(255,255,255,0.3);font-size:13px;text-align:center;padding:8px 0">No bills yet</p>`;
+    list.innerHTML = `<p style="color:rgba(255,255,255,0.3);font-size:13px;text-align:center;padding:8px 0">Nenhuma conta cadastrada</p>`;
     return;
   }
   list.innerHTML = sorted.map((b, i) => {
@@ -537,7 +537,7 @@ function renderBillsList() {
     return `<div class="bill-item" style="${past ? 'opacity:0.45' : ''}">
       <div class="bill-item-info">
         <div class="bill-item-name">${escHtml(b.name)}</div>
-        <div class="bill-item-date">${b.date}${past ? ' · past' : ''}</div>
+        <div class="bill-item-date">${b.date}${past ? ' · passada' : ''}</div>
       </div>
       <div class="bill-item-amount">${escHtml(b.currency)} ${Number(b.amount).toFixed(2)}</div>
       <button class="bill-delete" onclick="deleteBill(${i})" title="Remove">×</button>
@@ -604,25 +604,25 @@ function renderTracker(key) {
   const statusEl = document.getElementById(`${key}-status`);
 
   if (days === null) {
-    daysEl.innerHTML   = `—<small> not set</small>`;
+    daysEl.innerHTML   = `—<small> sem registro</small>`;
     statusEl.className = 'tracker-status status-due';
-    statusEl.textContent = 'No record';
+    statusEl.textContent = 'Sem registro';
     return;
   }
 
   daysEl.innerHTML = days === 0
-    ? `Today`
-    : `${days}<small> day${days !== 1 ? 's' : ''} ago</small>`;
+    ? `Hoje`
+    : `${days}<small> dia${days !== 1 ? 's' : ''} atrás</small>`;
 
   if (days < cfg.dueAfter) {
     statusEl.className   = 'tracker-status status-ok';
-    statusEl.textContent = '✓ All good';
+    statusEl.textContent = '✓ Em dia';
   } else if (days < cfg.overAfter) {
     statusEl.className   = 'tracker-status status-due';
-    statusEl.textContent = '● Due soon';
+    statusEl.textContent = '● Quase na hora';
   } else {
     statusEl.className   = 'tracker-status status-overdue';
-    statusEl.textContent = '⚠ Overdue!';
+    statusEl.textContent = '⚠ Atrasado!';
   }
 }
 
