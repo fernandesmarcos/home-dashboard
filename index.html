@@ -387,7 +387,12 @@ const DEFAULT_BILLS = [
 ];
 
 let bills    = load('bills', DEFAULT_BILLS);
-let trackers = load('trackers', { plants: null, candle: null });
+let trackers = load('trackers', { plants: '2026-06-19', candle: '2026-06-20' });
+
+// Seed defaults if values are still null
+if (!trackers.plants) trackers.plants = '2026-06-19';
+if (!trackers.candle) trackers.candle = '2026-06-20';
+save('trackers', trackers);
 
 // ── Clocks ──────────────────────────────────────────────────────────────────
 const DAY_PT = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
